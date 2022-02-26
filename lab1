@@ -1,0 +1,77 @@
+#!/bin/bash
+echo "Program"
+echo "BAA"
+while true;do
+	echo "Want to see a list [Y/N]?"
+	while true; do
+	read response
+	if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]
+	then
+		dnf repolist all
+	fi
+	echo "Continue [C/E]?"
+	read response1
+	if [[ "$response1" =~ ^([cC])$ ]]
+	then
+		echo "GO"
+	else
+		exit 0
+	fi
+	echo "Enter the repo's name"
+	read reponame
+	if dnf repolist | grep -c $reponame > 0
+	then
+		dnf repoinfo $reponame
+		break
+	else
+		echo "Not found in enbaled list"
+	fi
+	echo "Do you want to find in disabled list? [Y/N]"
+	read response2
+	if [[ "$response2" =~ ^([yY][eE][sS]|[yY])$ ]]
+	then
+		if dnf repolist disabled | grep -c $reponame > 0
+		then
+			dnf repoinfo $reponame
+			echo "Do you want to enable this rep? [Y/N]"
+			read response3
+			if [[ "$response3" =~ ^([yY][eE][sS]|[yY])$ ]]
+			then
+				echo "System will instal config manager, press Y"
+				dnf install dnf-utils
+				dnf config-manager --enable $reponame
+				echo "Info:"
+				dnf repoinfo $reponame
+			else break
+			fi
+		else
+			echo "Not found. Do you want to install? (System will install dnf utils) [Y/N]"
+			read response5
+                        if [[ "$response5" =~ ^([yY][eE][sS]|[yY])$ ]]
+                        then
+                                echo "Enter the https of rep"
+                                read https
+				dnf install dnf-utils
+				dnf config-manager --add-repo $https
+				echo "Done"
+				echo "See info about new repo?"
+				read response6
+                        	if [[ "$response5" =~ ^([yY][eE][sS]|[yY])$ ]]
+				then
+					dnf repoinfo $reponame
+					break
+				else break
+				fi
+                        else break
+                        fi
+		fi
+	else break
+	fi
+done
+	echo "the program has ended.Do you want to continue? [Y/N]"
+		read response4
+		if [[ "$response4" =~ ^([yY][eE][sS]|[yY])$ ]]
+		then continue
+		else break
+		fi
+done
