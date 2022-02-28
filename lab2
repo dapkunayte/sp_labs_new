@@ -43,6 +43,7 @@ while true;do
 				dnf config-manager --enable $reponame
 				echo "Info:"
 				dnf repoinfo $reponame
+				break
 			else break
 			fi
 		else
